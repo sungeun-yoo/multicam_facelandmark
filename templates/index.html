@@ -44,6 +44,22 @@ limitations under the License. -->
     <div class="blend-shapes">
       <ul class="blend-shapes-list" id="video-blend-shapes"></ul>
     </div>
+
+    <!-- Second Camera View -->
+    <div id="liveView2" class="videoView">
+      <button id="webcamButton2" class="mdc-button mdc-button--raised">
+        <span class="mdc-button__ripple"></span>
+        <span class="mdc-button__label">ENABLE WEBCAM 2</span>
+      </button>
+      <div style="position: relative;">
+        <video id="webcam2" style="position: absolute" autoplay playsinline></video>
+        <canvas class="output_canvas" id="output_canvas2" style="position: absolute; left: 0px; top: 0px;"></canvas>
+      </div>
+    </div>
+
+    <div class="blend-shapes">
+      <ul class="blend-shapes-list" id="video-blend-shapes"></ul>
+    </div>
   </section>
 </body>
 </html>
