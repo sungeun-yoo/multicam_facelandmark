@@ -1,8 +1,12 @@
 from flask import Flask, render_template, jsonify
 import os
+import mimetypes
 
 app = Flask(__name__)
 
+# JavaScript에 대한 MIME 타입 강제 설정
+mimetypes.add_type('application/javascript', '.js')
+print("mimetypes")
 @app.route('/')
 def index():
     return render_template('index_3.html')
@@ -15,5 +19,3 @@ def webcam_list():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
