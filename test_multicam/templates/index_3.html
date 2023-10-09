@@ -90,6 +90,7 @@
             } else {
                 console.error("웹캠이 연결되어 있지 않습니다.");
             }
+            
         });
 
         function connectCamera(videoElementId, deviceId) {
@@ -101,7 +102,7 @@
                     deviceId: deviceId,
                     width: { exact: 320 },
                     height: { exact: 240 },
-                    frameRate: { exact: 15 }
+                    frameRate: { exact: 5 }
                 }
             };
 
@@ -114,8 +115,18 @@
                 });
         }        
     </script>
+    <button id="runLandmarkScript">Run Landmark Script</button>
+    <script>
+        document.getElementById("runLandmarkScript").addEventListener("click", function() {
+            // landmark.js 파일을 동적으로 로드하여 실행합니다.
+            const script = document.createElement("script");
+            script.src = "static/landmark.js";
+            script.type = "module";
+            document.body.appendChild(script);
+        });
 
-    <script type="module" src="static/landmark.js"></script>
+        // navigator.mediaDevices.enumerateDevices() 및 connectCamera() 함수 부분은 그대로 유지합니다.
+    </script>
 
 </body>
 </html>

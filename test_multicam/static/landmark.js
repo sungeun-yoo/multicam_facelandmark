@@ -2,7 +2,7 @@ import vision from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3"
 const { FaceLandmarker, FilesetResolver, DrawingUtils } = vision;
 
 const videoWidth = 320;
-const numberOfCams = 5; // to create 5 instances
+const numberOfCams = 9; // to create 5 instances
 let faceLandmarkers = [];
 let drawingUtilsList = [];
 let lastVideoTimes = Array(numberOfCams).fill(-1);
@@ -10,36 +10,57 @@ let resultsList = Array(numberOfCams).fill(undefined);
 let webcamRunning = true;
 
 async function createFaceLandmarker(index) {
-    const filesetResolver = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
-    );
-    faceLandmarkers[index] = await FaceLandmarker.createFromOptions(filesetResolver, {
-        baseOptions: {
-            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
-            delegate: "GPU"
-        },
-        outputFaceBlendshapes: true,
-        runningMode: "VIDEO",
-        numFaces: 1
+    return new Promise(async (resolve) => {
+        const filesetResolver = await FilesetResolver.forVisionTasks(
+            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
+        );
+        faceLandmarkers[index] = await FaceLandmarker.createFromOptions(filesetResolver, {
+            baseOptions: {
+                modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
+                delegate: "GPU"
+            },
+            outputFaceBlendshapes: true,
+            runningMode: "VIDEO",
+            numFaces: 1
+        });
+
+        resolve(); // Promise를 완료합니다.
     });
 }
 
-// UI가 다 만들어지면 시작하도록 이벤트를 기다린다.
-document.addEventListener('camerasectionLoaded', function() {
-    for (let i = 0; i < numberOfCams; i++) {
-        createFaceLandmarker(i);
-        const video = document.getElementById(`cam${i + 1}`);
-        const canvasElement = document.getElementById(`canvas${i + 1}`);
-        console.log(canvasElement);  
-        const canvasCtx = canvasElement.getContext("2d");
-        drawingUtilsList.push(new DrawingUtils(canvasCtx));
-    
-        navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+async function getVideoDevices() {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    return devices.filter(device => device.kind === 'videoinput');
+}
+
+
+const videoDevices = await getVideoDevices();
+
+for (let i = 0; i < numberOfCams; i++) {
+    await createFaceLandmarker(i);
+
+    const video = document.getElementById(`cam${i + 1}`);
+    const canvasElement = document.getElementById(`canvas${i + 1}`);
+    const canvasCtx = canvasElement.getContext("2d");
+    drawingUtilsList.push(new DrawingUtils(canvasCtx));
+
+    if (i < videoDevices.length) {
+        const constraints = {
+            video: {
+                deviceId: videoDevices[i].deviceId
+            }
+        };
+
+        navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
             video.srcObject = stream;
             video.addEventListener("loadeddata", () => predictWebcam(video, canvasElement, i));
         });
+    } else {
+        console.error(`Camera ${i + 1}를 사용할 수 없습니다.`);
     }
-});
+}
+
+
 
 
 function updateEyeBlinkScores(camNumber, eyeBlinkLeftScore, eyeBlinkRightScore) {
