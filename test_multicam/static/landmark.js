@@ -1,6 +1,6 @@
 import vision from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 const { FaceLandmarker, FilesetResolver, DrawingUtils } = vision;
-const videoWidth = 320;
+const videoWidth = 640;
 const numberOfCams = 9; // to create 5 instances
 let faceLandmarkers = [];
 let drawingUtilsList = [];
