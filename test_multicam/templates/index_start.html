@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Full Screen Image with Button</title>
+    <style>
+        /* 기존 스타일 */
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: black;
+        }
+
+        .full-screen-image {
+            background-image: url('/static/resource/poster.jpg');
+            height: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            position: relative;
+            box-shadow: 0 0 100px 100px rgba(0, 0, 0, 1) inset;
+        }
+
+        /* 버튼 스타일 */
+        .start-button {
+            position: absolute;
+            bottom: 10%;
+            left: 60%;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="full-screen-image">
+    <button class="start-button" onclick="location.href='/index_3'">관리 프로그램 시작하기</button>
+
+</div>
+</body>
+</html>
