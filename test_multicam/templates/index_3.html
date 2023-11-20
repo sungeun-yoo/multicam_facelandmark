@@ -16,6 +16,13 @@
                 grid-template-columns: repeat(5, 640px);
                 gap: 30px;
             }
+            /* 맨 위에 갭을 설정 (1번 줄 위에 20px의 갭) */
+            .grid::before {
+                content: "";
+                grid-row: 1; /* 첫 번째 줄에 적용 */
+                grid-column: span 5; /* 모든 열에 적용 */
+                height: 100px; /* 원하는 갭의 높이 설정 */
+            }
     
             .grid-item {
                 width:  640px;
