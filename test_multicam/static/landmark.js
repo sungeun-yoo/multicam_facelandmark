@@ -82,10 +82,10 @@ function updateEyeBlinkScores(camNumber, eyeBlinkLeftScore, eyeBlinkRightScore) 
   // 둘 다 0.5가 넘는지 검사
   if (eyeBlinkLeftScore > 0.5 && eyeBlinkRightScore > 0.5) {
     document.getElementById(`canvas${camNumber}`).style.border = "10px solid red";
-    console.log(`${eyeBlinkLeftScore} ${eyeBlinkRightScore}Excute border RED`);
+    //console.log(`${eyeBlinkLeftScore} ${eyeBlinkRightScore}Excute border RED`);
   } else {
     document.getElementById(`canvas${camNumber}`).style.border = "0px solid red";
-    console.log(`${eyeBlinkLeftScore} ${eyeBlinkRightScore}Excute border NORMAL`);
+    //console.log(`${eyeBlinkLeftScore} ${eyeBlinkRightScore}Excute border NORMAL`);
   }
 }
 
