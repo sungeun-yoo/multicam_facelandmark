@@ -1,12 +1,19 @@
 import vision from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 const { FaceLandmarker, FilesetResolver, DrawingUtils } = vision;
 const videoWidth = 640;
-const numberOfCams = 9; // to create 5 instances
+const numberOfCams = 10; // to create 5 instances
 let faceLandmarkers = [];
 let drawingUtilsList = [];
 let lastVideoTimes = Array(numberOfCams).fill(-1);
 let resultsList = Array(numberOfCams).fill(undefined);
 let webcamRunning = true;
+
+// JSON 파일에서 설정 불러오기
+const response = await fetch('./static/config/conf.json');
+const config = await response.json();
+const overridingList = config.overriding_list;
+const redlineWidth = config.red_line_width;
+const blinkThreshold = config.blink_threshold;
 
 async function createFaceLandmarkers() {
   const filesetResolver = await FilesetResolver.forVisionTasks(
@@ -36,7 +43,7 @@ async function getVideoDevices() {
   return devices.filter(device => device.kind === 'videoinput');
 }
 
-async function setupCameras() {
+/*async function setupCameras() {
   const videoDevices = await getVideoDevices();
   
   for (let i = 0; i < numberOfCams; i++) {
@@ -59,6 +66,35 @@ async function setupCameras() {
       console.error(`Camera ${i + 1}를 사용할 수 없습니다.`);
     }
   }
+}*/
+async function setupCameras() {
+  try {
+    const videoDevices = await getVideoDevices();
+  
+    for (let i = 0; i < overridingList.length; i++) {
+      const camIndex = i; //overridingList[i] - 1; // 배열은 0부터 시작하므로 1을 빼줍니다.
+      const video = document.getElementById(`cam${overridingList[i]}`);
+      const canvasElement = document.getElementById(`canvas${overridingList[i]}`);
+      const canvasCtx = canvasElement.getContext("2d");
+      drawingUtilsList.push(new DrawingUtils(canvasCtx));
+
+      if (camIndex < videoDevices.length) {
+        const constraints = {
+          video: {
+            deviceId: videoDevices[camIndex].deviceId
+          }
+        };
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = stream;
+        video.addEventListener("loadeddata", () => predictWebcam(video, canvasElement, overridingList[i]-1));
+      } else {
+        console.error(`i : ${i} : Camera ${overridingList[i]}를 사용할 수 없습니다.`);
+      }
+    }
+  } catch (error) {
+    console.error("카메라 설정 로딩 중 에러 발생:", error);
+  }
 }
 
 function updateEyeBlinkScores(camNumber, eyeBlinkLeftScore, eyeBlinkRightScore) {
@@ -80,8 +116,8 @@ function updateEyeBlinkScores(camNumber, eyeBlinkLeftScore, eyeBlinkRightScore) 
   }
 
   // 둘 다 0.5가 넘는지 검사
-  if (eyeBlinkLeftScore > 0.5 && eyeBlinkRightScore > 0.5) {
-    document.getElementById(`canvas${camNumber}`).style.border = "10px solid red";
+  if (eyeBlinkLeftScore > blinkThreshold && eyeBlinkRightScore > blinkThreshold) {
+    document.getElementById(`canvas${camNumber}`).style.border = `${redlineWidth}px solid red`;    
     //console.log(`${eyeBlinkLeftScore} ${eyeBlinkRightScore}Excute border RED`);
   } else {
     document.getElementById(`canvas${camNumber}`).style.border = "0px solid red";

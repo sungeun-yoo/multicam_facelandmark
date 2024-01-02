@@ -183,12 +183,23 @@
             let videoDevices = devices.filter(device => device.kind === 'videoinput');
 
             if(videoDevices.length > 0) {
-                // 연결된 모든 웹캠 연결
-                for(let i = 1; i <= videoDevices.length; i++) {
-                    connectCamera(`cam${i}`, videoDevices[i-1].deviceId);
-                }
+                // Load the configuration from conf.json
+                fetch('./static/config/conf.json')
+                    .then(response => response.json())
+                    .then(config => {
+                        // Use the overriding list to connect cameras
+                        const overridingList = config.overriding_list;
+                        overridingList.forEach((camNumber, index) => {
+                            if(index < videoDevices.length) {
+                                connectCamera(`cam${camNumber}`, videoDevices[index].deviceId);
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error("Error loading configuration", error);
+                    });
             } else {
-                console.error("웹캠이 연결되어 있지 않습니다.");
+                console.error("No webcams are connected.");
             }
             
         });

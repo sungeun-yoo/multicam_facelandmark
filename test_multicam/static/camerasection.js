@@ -1,21 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
     const cameraGrid = document.getElementById('cameraGrid');
-
-    for (let i = 1; i <= 2; i++){
-        for (let i = 1; i <= 5; i++) {
+    const max_col = 5;
+    for (let j = 0; j < 2; j++){
+        for (let i = 1; i <= max_col; i++) {
             // Camera container
             let cameraContainer = document.createElement('div');
             cameraContainer.classList.add('camera-container');
     
             let video = document.createElement('video');
-            video.id = `cam${i}`;
+            video.id = `cam${i + j*max_col}`;
             video.autoplay = true;
             video.muted = true;
             video.playsInline = true;
             cameraContainer.appendChild(video);
     
             let canvas = document.createElement('canvas');
-            canvas.id = `canvas${i}`;
+            canvas.id = `canvas${i + j*max_col}`;
             cameraContainer.appendChild(canvas);
     
             cameraGrid.appendChild(cameraContainer);
@@ -31,9 +31,9 @@ document.addEventListener('DOMContentLoaded', function() {
             eyeBlinkLeftDiv.innerHTML = `
                 <div class="label">Eye Blink Left:</div>
                 <div class="bar-container">
-                    <div id="eyeBlinkLeft-bar${i}" class="score-bar"></div>
+                    <div id="eyeBlinkLeft-bar${i + j*max_col}" class="score-bar"></div>
                 </div>
-                <div class="score-label"><span id="eyeBlinkLeft-score${i}">-</span></div>
+                <div class="score-label"><span id="eyeBlinkLeft-score${i + j*max_col}">-</span></div>
             `;
             cameraInfo.appendChild(eyeBlinkLeftDiv);
     
@@ -42,9 +42,9 @@ document.addEventListener('DOMContentLoaded', function() {
             eyeBlinkRightDiv.innerHTML = `
                 <div class="label">Eye Blink Right:</div>
                 <div class="bar-container">
-                    <div id="eyeBlinkRight-bar${i}" class="score-bar"></div>
+                    <div id="eyeBlinkRight-bar${i + j*max_col}" class="score-bar"></div>
                 </div>
-                <div class="score-label"><span id="eyeBlinkRight-score${i}">-</span></div>
+                <div class="score-label"><span id="eyeBlinkRight-score${i + j*max_col}">-</span></div>
             `;
             cameraInfo.appendChild(eyeBlinkRightDiv);
     
